@@ -1,27 +1,258 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="jquery.js"></script>
-    <script src="data_generator.js"></script>
-  </head>
-  <body>
-    <script>
+<html lang="">
+	<head>
+		<title>Title Page</title>
+		<meta charset="UTF-8">
+		<meta name=description content="">
+		<meta name=viewport content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- Bootstrap CSS -->
+		<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="fonts/fontawesome/css/font-awesome.min.css" rel="stylesheet" media="screen">
+		<link href="css/app.css" rel="stylesheet" media="screen">
+		<script src="libs/jquery.js"></script>
+		<script src="libs/underscore-1.6.0.min.js"></script>
+		<script type='text/javascript' src='https://cdn.firebase.com/js/simple-login/1.3.2/firebase-simple-login.js'></script>
+		<script type='text/javascript' src='https://cdn.firebase.com/js/client/1.0.11/firebase.js'></script>
+		<script src="bootstrap/js/bootstrap.min.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/auth.js"></script>
+		<script src="js/data_generator.js"></script>
+		<!-- Bootstrap JavaScript -->
+	</head>
+	<body>
+		<div class="container">
+			<div id="userdata" class="right" style="display:;">
+		       	Email:
+		        	<div id="accountEmail"></div>
+		        	<button class="btn btn-warning" id="logOutBtn">Logout</button>
+		    	</div>
+		    	<div class="clear"></div>
+		    	<div id="loginbox" class="col-md-6 col-md-offset-3" style="display:none;">
+		    		<h2 class="text-center">Login</h2>
+				
+				<div class="form-group">
+					<label>Email</label>
+					<input id="loginemail" type="text" class="form-control" />
+				</div>
+				<div class="form-group">
+					<label>Password</label>
+					<input id="loginpass" type="password" class="form-control" />
+				</div>
+				
+				<button class="btn btn-primary btn-block" id="loginbtn">Login</button>
+				<br>
+				<div class="btn-group btn-group-justified">
+					<a class="btn btn-success" type="button" id="showSignupBtn">Sign Up</a>
+					<a class="btn btn-info" type="button"  id="showFortgotBtn">Forgot Password</a>
+				</div>
+		    	</div>
+		    	<div id="signupbox" class="col-md-6 col-md-offset-3" style="display:none;">
+				<h2 class="text-center">Sign Up</h2>
+				
+				<div class="form-group">
+					<label>Username</label>
+					<input id="newUsername" type="text" class="form-control" />
+				</div>
+				<div class="form-group">
+					<label>Email</label>
+					<input id="newemail" type="text" class="form-control" />
+				</div>
+				<div class="form-group">
+					<label>Password</label>
+					<input id="newpass" type="password" class="form-control" />
+				</div>
+				
+				
+				
+				<button class="btn btn-primary btn-block" id="signupbtn">Sign Up</button>
+				<br>
+				<a class="btn btn-primary btn-block" id="showLoginBtn">I already have an account</a>
+		    	</div>
+		    	<div id="forgotbox" class="middlebox center" style="display:none;">
+				Forgot Password?
+				<br>
+				<br>
+				Enter your email and we'll send you a reset.
+				<br>
+				Email<input id="forgotemail" type="text"/>
+				<br>
+				<br>
+				<button id="forgotbtn">Reset Password</button>
+				<br>
+				<a href="javascript:showLogin()">Just kidding, I remember it</a>
+		    </div>
+		</div>
+		<div class="container" id="twittler" style="display:none;">
+			
+			<div class="row">
+				<div class="col-md-12">
+					<div class="title-bar">
+						<h1 class="" id="feedTitle">
+						<i style="display:none;" class="homeFeed fa fa-chevron-left pull-right"></i> Twittler<strong>Feed</strong>
+						<small class="pull-right" id="accountUsername"></small>
+						</h1>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<ul class="side-bar">
+						<li><a data-toggle="tab" href="#feedTab" class="active home" id="homeFeed">Feed</a></li>
+						<li><a id="mtweets">My Tweets</a></li>
+						<span id="userBlock" class="block side-block">
+							<h3 class="block-heading"><i class="fa fa-users"></i> Users</h3>
+						</span>
+						<a class="composeBtn" data-toggle="tab" href="#composeTab"><i class="fa fa-edit"></i> Compose</a>
+						 <!-- <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+						  <li><a href="#profile" data-toggle="tab">Profile</a></li>
+						  <li><a href="#messages" data-toggle="tab">Messages</a></li>
+						  <li><a href="#settings" data-toggle="tab">Settings</a></li> -->
+					</ul>
+				</div>
 
-      $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
+				<div class="col-md-9">
+					<div class="tab-content">
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
-        }
 
-      });
+						<!-- <div class="tab-content">
+						  <div class="tab-pane active" id="home">Home</div>
+						  <div class="tab-pane" id="profile">Profile</div>
+						  <div class="tab-pane" id="messages">Messages</div>
+						  <div class="tab-pane" id="settings">Settings</div>
+						</div> -->
 
-    </script>
-  </body>
+					  	<div class="tab-pane active" id="feedTab">
+							<ul class="feed-list" id="feed">
+
+							</ul>
+						</div>
+						<div class="tab-pane" id="myTab">
+							<ul class="feed-list" id="accountFeed">
+
+							</ul>
+					  	</div>
+						<div class="tab-pane" id="composeTab">
+							<div class="block main-block">
+								<div class="form-group">
+									<textarea id="tweetMsg" class="" placeholder="Tweet"></textarea>
+								</div>
+								<p class="text-orange" id="composeError" style="display:none;"></p>
+							</div>
+							<div class="button bg-blue" id="writeTweetBtn">Tweet</div>
+							
+						</div>  
+					  	
+					  	
+					  	
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<!-- jQuery -->
+	<script>
+
+			$(document).ready(function(){
+				//window.visitor = prompt("Please enter your username");
+
+				var $body = $('body');
+				var $feed = $("#feed");
+				var $genBtn = $("#genTweet")
+				var $homeFeed = $(".homeFeed");
+				var $home = $(".home")
+				
+				
+				
+				var each = function(array, cb){
+					for (var i = 0; i < array.length; i++) {
+						cb(array[i], i, array);
+					};
+				}
+
+				/*var Tweet = {
+					getAll: function(username){
+						$feed.html('');
+						var index = streams.home.length - 1;
+						while(index >= 0){
+							var tweet = streams.home[index];
+							if(username){
+								if(tweet.user === username){
+									$homeFeed.show();
+									Tweet.display(tweet);
+								}
+							} else {
+								$homeFeed.hide();
+								Tweet.display(tweet);
+							}
+							index -= 1;
+						}		
+						
+					},*/
+					/*getUsers : function (){
+						var users = window.users;
+						each(users, function(item, i, array){
+							var temp = '<a href="#feedTab" data-toggle="tab" class="link block-item" id="link_'+item+'">@'+item+'</div>';
+							console.log(item);
+							$(temp).appendTo($userBlock);
+						});
+					},*/
+					/*get: function(username){
+						$back.show();
+						var $tweets = window.streams.home;
+						$feed.html('');
+						$UserTweets = [];
+						each($tweets, function($t, i, list){
+							if($t.user === username){
+								//console.log($t);
+								//Tweet.display($t);
+								$UserTweets.push({user: $t.user, message: $t.message, created_at: $t.created_at});
+								Tweet.displayUserTweets();
+							}
+						});
+						console.log($tweets);
+					},*/
+					/*display: function(tweet){
+						var item = $('<li id="link_'+tweet.user+'"class="link feed-list-item" style="cursor: pointer;"></div>');
+						item.html('<h4 class="feed-list-item-heading">@' + tweet.user + '<small class="pull-right">'+tweet.created_at.toDateString()+'</small></h4><p class="feed-list-item-text">' + tweet.message + '</p>');
+						item.appendTo(feed);
+					},*/
+					/*post: function(data){
+
+					}*/
+				//};
+				
+				var getNewTweets = function(){
+					generateRandomTweet();
+					//Tweet.getAll();
+				}
+
+				
+				$genBtn.click(function(){
+					//getNewTweets();
+				})
+				//Tweet.getAll();
+				//Tweet.getUsers();
+				var setButtons = function(){				
+					$(".link").click(function(){
+						var username = $(this).attr('id').split("_")[1];
+						$UserTweets = null;
+						//Tweet.getAll(username);
+					});
+					$homeFeed.click(function(){
+						//Tweet.getAll();
+						setButtons();
+					});
+					$home.click(function(){
+						//Tweet.getAll();
+						setButtons();
+					});
+					
+				}
+			
+
+			});
+
+		</script>
+	</body>
 </html>
