@@ -278,11 +278,15 @@ $(document).ready(function(){
 		$tweetMsg.val("");
 	});
 
-	
-
+	// Get Current Signed in User
 	init();
+	
+	// Get all users.
 	User.init();
-	var generateRandomTweet = function(){
+
+	// I MUST CALL USER.init() before i can auto generate
+
+ 	var generateRandomTweet = function(){
 	  	var tweet = {};
 	  	tweet.user = _.sample(User.list);//randomUser(User.list);
 	  	var d = new Date();
