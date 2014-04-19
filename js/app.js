@@ -24,6 +24,7 @@ $(document).ready(function(){
 		//cb(tweetsArray);
 		return tweetsArray;
 
+
 	}
 	Tweet.SetDom = function(id, item){
 		var temp = $('<li data-tweetId="link_'+id+'" id="link_'+item.userId+'" class="link feed-list-item" style="cursor: pointer;"></div>');
