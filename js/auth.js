@@ -291,15 +291,12 @@ $(document).ready(function(){
 	  	var gm = d.getMonth();
 
 	  	tweet.message = randomMessage();
-	  	//tweet.created_at =  gd + "/" + gm + "/" + gy; //Firebase.ServerValue.TIMESTAMP;
 	  	tweet.created_at =  Firebase.ServerValue.TIMESTAMP;
 	  	if(tweet.user){
 	  	Tweet.root.child(tweet.user.id).push({created_at: tweet.created_at, uid: tweet.user.id, user: tweet.user.name, message: tweet.message});
 	  	}
 	  	//console.log(tweet.user);
-	  	//addTweet(tweet);
 	};
-	//getAllTweets();
 	var scheduleNextTweet = function(){
 	  generateRandomTweet();
 	  setTimeout(scheduleNextTweet, Math.random() *  100000);
@@ -309,89 +306,3 @@ $(document).ready(function(){
 
 });
 
-
-
-
-
-
-
-/*	function displayToPage(item){
-		var temp = $('<li data-tweetId="link_'+item.id+'" id="link_'+item.userId+'" class="link feed-list-item" style="cursor: pointer;"></div>');
-		temp.html('<h4 class="feed-list-item-heading">@' + item.user + '<small class="pull-right">'+item.created_at+'</small></h4><p class="feed-list-item-text">' + item.message + '</p>');
-		//temp.prependTo(blocks.tweetFeed);
-		
-	}*/
-	/*function setHomeFeed(collection){
-		//console.log(collection);
-		$(blocks.tweetFeed).html("");
-		_.each(collection, function (item, index, array){
-			displayToPage(item);
-		});
-	}*/
-	/*function SetUserFeed(id, user){
-		
-
-		var item = $('<li id="link_'+tweet.user+'"class="link feed-list-item" style="cursor: pointer;"></div>');
-		item.html('<h4 class="feed-list-item-heading">@' + tweet.user + '<small class="pull-right">'+tweet.created_at'</small></h4><p class="feed-list-item-text">' + tweet.message + '</p>');
-		item.appendTo(blocks.tweetFeed);
-	}*/
-
-
-		/*function getAllTweets(bool){
-
-		tweetsRef.on("child_added", function(snapshot){
-			//console.log("snapshot", snapshot.val());
-			var value = snapshot.val();
-			var name = snapshot.name(); 
-			if(bool){
-				if(value.userId == bool){
-					twittlers.push({id: name, user: value.user, userId: value.userId, message: value.message, created_at: value.created_at});
-				}
-			} else {
-					twittlers.push({id: name, user: value.user, userId: value.userId, message: value.message, created_at: value.created_at});
-			}
-			//_.each(snapshot.val(), function (item, index, array){
-				//twittlers.push(
-			//});
-			iterateTweets(twittlers);
-			
-			btns.userLink.click(function(){
-				var username = $(this).attr('id').split("_")[1];
-				console.log(username);
-				SetUserFeed(id, user);
-			});
-		});
-	}
-
-	function getUserTweets(id){
-		myRootRef.child(id).child('tweets').on("value", function(snapshot){
-			var value = snapshot.val();
-			console.log(value);
-			var name = snapshot.name(); 
-			_.each(value, function (item, index, array){
-				//twittlers.push(
-				twittlers.push({id: index, user: item.user, userId: item.userId, message: item.message, created_at: item.created_at});
-			});
-
-			iterateTweets(twittlers);
-			//console.log()
-			
-		});
-	}*/
-
-
-	/*function iterateTweets(twittlers){
-		if(twittlers.length > 10){
-			twittlers.sort(function(a, b) {
-				return( (a.created_at > b.created_at) ? 1 : -1);
-			});
-			setHomeFeed(twittlers);
-		} else if(twittlers.length > 5){
-			twittlers.sort(function(a, b) {
-				return( (a.created_at > b.created_at) ? 1 : -1);
-			});
-			setHomeFeed(twittlers);
-		} else {
-			setHomeFeed(twittlers);
-		}
-	}*/

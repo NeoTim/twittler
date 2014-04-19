@@ -105,11 +105,6 @@
 					        	<br>
 					        	<button class="btn btn-warning" id="logOutBtn">Logout</button>
 					    	</div>
-						<!-- <a class="composeBtn" data-toggle="tab" href="#composeTab"><i class="fa fa-edit"></i> Compose</a> -->
-						 <!-- <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-						  <li><a href="#profile" data-toggle="tab">Profile</a></li>
-						  <li><a href="#messages" data-toggle="tab">Messages</a></li>
-						  <li><a href="#settings" data-toggle="tab">Settings</a></li> -->
 					</ul>
 				</div>
 
@@ -128,34 +123,11 @@
 							</div>
 							<p class="text-orange" id="composeError" style="display:none;"></p>
 						</div>
-						<!-- <div class="button bg-blue" id="writeTweetBtn">Tweet</div> -->
 					</ul>
 					<div class="tab-content">
 
-
-						<!-- <div class="tab-content">
-						  <div class="tab-pane active" id="home">Home</div>
-						  <div class="tab-pane" id="profile">Profile</div>
-						  <div class="tab-pane" id="messages">Messages</div>
-						  <div class="tab-pane" id="settings">Settings</div>
-						</div> -->
-
 					  	<div class="tab-pane active" id="feedTab">
-							<!-- <ul class="feed-list" id="accountFeed2">
-					  			<div class="button bg-blue" id="CompTweetBtn2"><i class="fa fa-edit"></i> Compose</div>
-								<div class="block main-block" id="CompTweetBox2" style="display:none;">
-									<div class="form-group">
-										<div class="input-group">
-											<textarea id="tweetMsg2" class="" placeholder="Tweet"></textarea>
-											<span class="input-group-btn">
-												<button type="button" class="btn btn-blue" id="writeTweetBtnw2">Tweet</button>				
-												<button type="button" class="btn btn-orange" id="cancelTweetBtnw2">Cancel</button>				
-											</span>
-										</div>
-									</div>
-									<p class="text-orange" id="composeError2" style="display:none;"></p>
-								</div>
-							</ul> -->
+							
 							<ul class="feed-list" id="feed">
 							</ul>
 						</div>
@@ -171,106 +143,9 @@
 			</div>
 		</div>
 		<!-- jQuery -->
-	<script>
+		<script>
 
 			$(document).ready(function(){
-				//window.visitor = prompt("Please enter your username");
-
-				/*var $body = $('body');
-				var $feed = $("#feed");
-				var $genBtn = $("#genTweet")
-				var $homeFeed = $(".homeFeed");
-				var $home = $(".home")
-				*/
-				
-				
-				/*var each = function(array, cb){
-					for (var i = 0; i < array.length; i++) {
-						cb(array[i], i, array);
-					};
-				}*/
-
-				/*var Tweet = {
-					getAll: function(username){
-						$feed.html('');
-						var index = streams.home.length - 1;
-						while(index >= 0){
-							var tweet = streams.home[index];
-							if(username){
-								if(tweet.user === username){
-									$homeFeed.show();
-									Tweet.display(tweet);
-								}
-							} else {
-								$homeFeed.hide();
-								Tweet.display(tweet);
-							}
-							index -= 1;
-						}		
-						
-					},*/
-					/*getUsers : function (){
-						var users = window.users;
-						each(users, function(item, i, array){
-							var temp = '<a href="#feedTab" data-toggle="tab" class="link block-item" id="link_'+item+'">@'+item+'</div>';
-							console.log(item);
-							$(temp).appendTo($userBlock);
-						});
-					},*/
-					/*get: function(username){
-						$back.show();
-						var $tweets = window.streams.home;
-						$feed.html('');
-						$UserTweets = [];
-						each($tweets, function($t, i, list){
-							if($t.user === username){
-								//console.log($t);
-								//Tweet.display($t);
-								$UserTweets.push({user: $t.user, message: $t.message, created_at: $t.created_at});
-								Tweet.displayUserTweets();
-							}
-						});
-						console.log($tweets);
-					},*/
-					/*display: function(tweet){
-						var item = $('<li id="link_'+tweet.user+'"class="link feed-list-item" style="cursor: pointer;"></div>');
-						item.html('<h4 class="feed-list-item-heading">@' + tweet.user + '<small class="pull-right">'+tweet.created_at.toDateString()+'</small></h4><p class="feed-list-item-text">' + tweet.message + '</p>');
-						item.appendTo(feed);
-					},*/
-					/*post: function(data){
-
-					}*/
-				//};
-				
-				/*var getNewTweets = function(){
-					generateRandomTweet();
-					//Tweet.getAll();
-				}
-
-				
-				$genBtn.click(function(){
-					//getNewTweets();
-				})
-				//Tweet.getAll();
-				//Tweet.getUsers();
-				var setButtons = function(){				
-					$(".link").click(function(){
-						var username = $(this).attr('id').split("_")[1];
-						$UserTweets = null;
-						//Tweet.getAll(username);
-					});
-					$homeFeed.click(function(){
-						//Tweet.getAll();
-						setButtons();
-					});
-					$home.click(function(){
-						//Tweet.getAll();
-						setButtons();
-					});
-					
-				}
-			*/
-
 			});
 
 		</script>
