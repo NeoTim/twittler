@@ -1,6 +1,8 @@
 $(document).ready(function(){
 
-	var each = function(array, cb){
+	window.User = {};
+	User.list = [];
+	window.each = function(array, cb){
 		for (var i = 0; i < array.length; i++) {
 			cb(array[i], i, array);
 		};
@@ -17,21 +19,22 @@ $(document).ready(function(){
 					doPost(data);
 			}
 	};
-	
-
 	var btns = {
 		logout: $("#logOutBtn"),
 		showLogin: $("#showLoginBtn"),
 		showSignup: $("#showSignupBtn"),
 		showForgot: $("#showForgotBtn"),
-		userLink: $(".link")
+		userLink: $(".link"),
+		compTweet: $("#CompTweetBtn"),
+		cancelTweet: $("#cancelTweetBtn")
 	}
 	var submits = {
 		tweet: $("#writeTweetBtn"),
 	}
 	var blocks = {
 		sideUsers : $("#userBlock"),
-		tweetFeed: $("#feed")
+		tweetFeed: $("#feed"),
+		compBox: $("#CompTweetBox")
 	}
 	var tabs = {
 		feed: $("#homeFeed")
@@ -54,82 +57,70 @@ $(document).ready(function(){
 		}
 	}
 
-	window.User = {};
+	var init = function(){
+		myRootRef = new Firebase('https://twittler-app.firebaseio.com/users/');
 
-	function init(){
-			myRootRef = new Firebase('https://twittler-app.firebaseio.com/users/');
-			//tweetsRef = new Firebase('https://twittler-app.firebaseio.com/tweets/');
-
-			//console.log(Tweet.all());
-
-			auth = new FirebaseSimpleLogin(myRootRef, function(error, user) {
-					if (error) {
-							// an error occurred while attempting login
-							alert("Error logging in: "+ error);
-					} else if (user) {						
-							account.id = user.id
-							account.uid = user.uid
-							account.email = user.email
-							User.getData(user);
-					} else {
-							//not logged in
-							showLogin();
-					}
-			});
-			$("#loginbtn").click(function(){
-					doLogin($("#loginemail").val(),$("#loginpass").val());
-			})
-			$("#signupbtn").click(function(){
-					createNewUser($("#newemail").val(),$("#newpass").val(), $("#newUsername").val());
-			})
-			$("#forgotbtn").click(function(){
-					doForgotPassword($("#forgotemail").val());
-			})
+		auth = new FirebaseSimpleLogin(myRootRef, function(error, user) {
+				if (error) {
+						// an error occurred while attempting login
+						alert("Error logging in: "+ error);
+				} else if (user) {						
+						account.id = user.id
+						account.uid = user.uid
+						account.email = user.email
+						User.getData(user);
+				} else {
+						//not logged in
+						showLogin();
+				}
+		});
+		$("#loginbtn").click(function(){
+				doLogin($("#loginemail").val(),$("#loginpass").val());
+		})
+		$("#signupbtn").click(function(){
+				createNewUser($("#newemail").val(),$("#newpass").val(), $("#newUsername").val());
+		})
+		$("#forgotbtn").click(function(){
+				doForgotPassword($("#forgotemail").val());
+		})
 	}
 
 	User.init = function (){
+			//console.log(users)
 		myRootRef.on("value", function(snapshot){
 			blocks.sideUsers.children().remove();
 			_.each(snapshot.val(), function (item, index, array){
+				//console.log(index);
+				User.list.push({name: item.username, id: index});
 				User.display(index, item);
 			})
 			setButtons();
 		});
 	}
 
-
-	
-	function setButtons(id){
+	var setButtons = function(){
 		$(".link").click(function(){
-			blocks.tweetFeed.children().remove();
+			//blocks.tweetFeed.children().remove();
 			twittlers = [];
 			var id = $(this).attr('id').split("_")[1];
-			//console.log(id);
+			Tweet.getByUser(id);
 			//getUserTweets(id);
-			//getAllTweets(id);
-			Tweet.display(id);
 
 		});
 
 		$("#mtweets").click(function(){
-			blocks.tweetFeed.children().remove();
-			twittlers = [];
-			var id= account.uid;
-			console.log(id);
-			//getUserTweets(id);
-			//getAllTweets(id);
-			Tweet.display(id);
-
+			Tweet.getByUser(account.uid);
 		});
+
 	}
-	function storeUser(user, username){
+	var storeUser = function(user, username){
 			var newEmail = user.email;
 			var newUsername = username;
 			myRootRef.child(user.uid).set({username: newUsername, email:newEmail})
 	}
 
-	function createNewUser(email,pass,username){
-		console.log(email+ " " +pass);
+	var createNewUser = function(email,pass,username){
+		//console.log(email+ " " +pass);
 		auth.createUser(email, pass, function(error, user) {
 			if (!error) {
 				//console.log(user);
@@ -141,12 +132,12 @@ $(document).ready(function(){
 		});
 	}
 
-	function showSignup(){
+	var showSignup = function(){
 			$("#loginbox").hide();
 			$("#signupbox").show();
 	}
 
-	function showLogin(){
+	var showLogin = function(){
 			$("#loginbox").show();
 			$("#forgotbox").hide();
 			$("#signupbox").hide();
@@ -156,11 +147,11 @@ $(document).ready(function(){
 			$("#twittler").hide();
 	}
 
-	function showForgotPassword(){
+	var showForgotPassword = function (){
 			$("#loginbox").hide();
 			$("#forgotbox").show();
 	}
-	function showUser(account){
+	var showUser = function(account){
 			$("#loginbox").hide();
 			$("#signupbox").hide();
 			$("#userdata").show();
@@ -168,38 +159,20 @@ $(document).ready(function(){
 			$("#accountUsername").text(account.username);
 			$("#twittler").show();
 	}
-	User.display = function (id, user){
-		var temp = '<a data-userid="'+id+'" data-toggle="tab" class="link block-item" id="link_'+id+'">@'+user.username+'</div>';
-		$(temp).appendTo(blocks.sideUsers);
-	}
 
-
-	function setMyFeed(item, id){
-		var temp = $('<li id="' +id+ '" class="feed-list-item" style="cursor: pointer;"></div>');
-		var innerTemp = $('<h4 class="feed-list-item-heading">@' + item.user + '<small class="pull-right">'+item.created_at+'</small></h4><p class="feed-list-item-text">' + item.message + '</p>');
-		temp.html(innerTemp);
-		//console.log(id, item);
-		temp.appendTo($accountFeed);
-	}
 	User.getData = function(user){
 		$("#loginbox").hide();
 		$("#signupbox").hide();
 
-		console.log("getting user data for id "+ user.id);
-		//add some way to show loading
-		//console.log(auth);
 		myRootRef.child(user.uid).once('value', function(snapshot) {
 			var U = snapshot.val();
-			console.log(snapshot.val());
+			//console.log(snapshot.val());
 			account.username = U.username;
 			account.tweets = U.tweets;
 			if(U.username == null){
 					alert("Please add your username under settings");
 			}
-			_.each(account.tweets, function (item, index, array){
-				setMyFeed(index, item);
-			});
-			
+
 			showUser(account);
 		});
 	}
@@ -207,14 +180,14 @@ $(document).ready(function(){
 
 
 
-	function doLogin(email,pass){
-			auth.login('password', {
-					email: email,
-					password: pass
-			});
+	var doLogin = function(email,pass){
+		auth.login('password', {
+			email: email,
+			password: pass
+		});
 	}
 
-	function doForgotPassword(email){
+	var doForgotPassword = function(email){
 		auth.sendPasswordResetEmail(email, function(error,success){
 			if(!error){
 					alert("Password reset email sent, check your inbox!");
@@ -224,7 +197,7 @@ $(document).ready(function(){
 			}
 		});
 	}
-	function doPost(data){
+	var doPost = function(data){
 		var data = {
 			message: data.message,
 			user: data.user,
@@ -237,12 +210,15 @@ $(document).ready(function(){
 		$tweetMsg.val("");
 		data = null;
 	}
-	function doLogout(){
+	var doLogout = function(){
 		auth.logout();
 	}
+	User.display = function (id, user){
+		var temp = '<a data-userid="'+id+'" data-toggle="tab" href="#userFeedTab" class="link block-item" id="link_'+id+'">@'+user.username+'</div>';
+		$(temp).appendTo(blocks.sideUsers);
+	}
 
-
-	function saveDataForUser(key,value){
+	var saveDataForUser = function(key,value){
 		myRootRef.child(userid).update({key:value});
 	}
 	
@@ -256,27 +232,79 @@ $(document).ready(function(){
 		data.user = account.username;
 		data.uid = account.uid;
 		data.message = $tweetMsg.val();
+		data.created_at = Firebase.ServerValue.TIMESTAMP;
 		if(!data.message){
 			errors.compose.show();
 		} else {
 			errors.compose.hide();
-			account.post(data);
+			Tweet.post(data);
+			 blocks.compBox.hide();
+			btns.compTweet.show();
+			$tweetMsg.val("");
 		}
 	});
 
-	tabs.feed.on("shown.bs.tab", function(e){
-		var activeTab = e.target //active Tab
-		var prevTab = e.relatedTarget //previouse tab
-		Tweet.display();
-		//getAllTweets();
 
+	var randomElement = function(collection){
+  		var randomIndex = Math.floor(Math.random() * collection.length);
+
+  		return collection[randomIndex];
+  		
+	};
+
+	// random tweet generator
+	var opening = ['just', '', '', '', '', 'ask me how i', 'completely', 'nearly', 'productively', 'efficiently', 'last night i', 'the president', 'that wizard', 'a ninja', 'a seedy old man'];
+	var verbs = ['drank', 'drunk', 'deployed', 'got', 'developed', 'built', 'invented', 'experienced', 'fought off', 'hardened', 'enjoyed', 'developed', 'consumed', 'debunked', 'drugged', 'doped', 'made', 'wrote', 'saw'];
+	var objects = ['my', 'your', 'the', 'a', 'my', 'an entire', 'this', 'that', 'the', 'the big', 'a new form of'];
+	var nouns = ['cat', 'koolaid', 'system', 'city', 'worm', 'cloud', 'potato', 'money', 'way of life', 'belief system', 'security system', 'bad decision', 'future', 'life', 'pony', 'mind'];
+	var tags = ['#techlife', '#burningman', '#sf', 'but only i know how', 'for real', '#sxsw', '#ballin', '#omg', '#yolo', '#magic', '', '', '', ''];
+
+	var randomMessage = function(){
+	  	return [randomElement(opening), randomElement(verbs), randomElement(objects), randomElement(nouns), randomElement(tags)].join(' ');
+	};	
+
+	
+	tabs.feed.click(function(){
+		Tweet.getAll();
+	});
+	btns.compTweet.click(function(){
+		$(this).hide();
+		blocks.compBox.show();
+		$tweetMsg.focus();
+	});
+	btns.cancelTweet.click(function(){
+		blocks.compBox.hide();
+		btns.compTweet.show();
+		$tweetMsg.val("");
 	});
 
+	
 
 	init();
 	User.init();
+	var generateRandomTweet = function(){
+	  	var tweet = {};
+	  	tweet.user = _.sample(User.list);//randomUser(User.list);
+	  	var d = new Date();
+	  	var gd = d.getDay();
+	  	var gy = d.getFullYear();
+	  	var gm = d.getMonth();
+
+	  	tweet.message = randomMessage();
+	  	//tweet.created_at =  gd + "/" + gm + "/" + gy; //Firebase.ServerValue.TIMESTAMP;
+	  	tweet.created_at =  Firebase.ServerValue.TIMESTAMP;
+	  	if(tweet.user){
+	  	Tweet.root.child(tweet.user.id).push({created_at: tweet.created_at, uid: tweet.user.id, user: tweet.user.name, message: tweet.message});
+	  	}
+	  	//console.log(tweet.user);
+	  	//addTweet(tweet);
+	};
 	//getAllTweets();
-	
+	var scheduleNextTweet = function(){
+	  generateRandomTweet();
+	  setTimeout(scheduleNextTweet, Math.random() *  100000);
+	};
+	scheduleNextTweet();
 	
 
 });

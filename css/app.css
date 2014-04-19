@@ -5,6 +5,20 @@ body {
 a {
 	color:#009ddf;
 }
+.btn.btn-orange {
+	background-color: #C9712A;
+	color:#fff;
+}
+.btn.btn-blue {
+	background-color: #009ddf;
+	color:#fff;
+}
+.btn.btn-orange:hover {
+	background-color: rgba(201, 113, 42, 0.84);
+}
+.btn.btn-blue:hover {
+	background-color: rgba(0, 157, 223, 0.81);
+}
 /*=============================== BACKGROUND ===============================*/
 .bg-light {
 	background-color: #FCFDFE;	

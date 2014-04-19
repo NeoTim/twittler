@@ -17,16 +17,12 @@
 		<script src="bootstrap/js/bootstrap.min.js"></script>
 		<script src="js/app.js"></script>
 		<script src="js/auth.js"></script>
-		<script src="js/data_generator.js"></script>
+		<!-- <script src="js/data_generator.js"></script> -->
 		<!-- Bootstrap JavaScript -->
 	</head>
 	<body>
 		<div class="container">
-			<div id="userdata" class="right" style="display:;">
-		       	Email:
-		        	<div id="accountEmail"></div>
-		        	<button class="btn btn-warning" id="logOutBtn">Logout</button>
-		    	</div>
+			
 		    	<div class="clear"></div>
 		    	<div id="loginbox" class="col-md-6 col-md-offset-3" style="display:none;">
 		    		<h2 class="text-center">Login</h2>
@@ -99,11 +95,17 @@
 				<div class="col-md-3">
 					<ul class="side-bar">
 						<li><a data-toggle="tab" href="#feedTab" class="active home" id="homeFeed">Feed</a></li>
-						<li><a id="mtweets">My Tweets</a></li>
+						<li><a id="mtweets" href="#userFeedTab" data-toggle="tab">My Tweets</a></li>
 						<span id="userBlock" class="block side-block">
 							<h3 class="block-heading"><i class="fa fa-users"></i> Users</h3>
 						</span>
-						<a class="composeBtn" data-toggle="tab" href="#composeTab"><i class="fa fa-edit"></i> Compose</a>
+						<div id="userdata" class="block side-block" style="display:;">
+
+					        	<p><div id="accountEmail"></div></p>
+					        	<br>
+					        	<button class="btn btn-warning" id="logOutBtn">Logout</button>
+					    	</div>
+						<!-- <a class="composeBtn" data-toggle="tab" href="#composeTab"><i class="fa fa-edit"></i> Compose</a> -->
 						 <!-- <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
 						  <li><a href="#profile" data-toggle="tab">Profile</a></li>
 						  <li><a href="#messages" data-toggle="tab">Messages</a></li>
@@ -112,6 +114,22 @@
 				</div>
 
 				<div class="col-md-9">
+					<ul class="feed-list" id="accountFeed">
+			  			<div class="button bg-blue" id="CompTweetBtn"><i class="fa fa-edit"></i> Compose</div>
+						<div class="block main-block" id="CompTweetBox" style="display:none;">
+							<div class="form-group">
+								<div class="input-group">
+									<textarea id="tweetMsg" class="" placeholder="Tweet"></textarea>
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-blue" id="writeTweetBtn">Tweet</button>				
+										<button type="button" class="btn btn-orange" id="cancelTweetBtn">Cancel</button>				
+									</span>
+								</div>
+							</div>
+							<p class="text-orange" id="composeError" style="display:none;"></p>
+						</div>
+						<!-- <div class="button bg-blue" id="writeTweetBtn">Tweet</div> -->
+					</ul>
 					<div class="tab-content">
 
 
@@ -123,28 +141,30 @@
 						</div> -->
 
 					  	<div class="tab-pane active" id="feedTab">
+							<!-- <ul class="feed-list" id="accountFeed2">
+					  			<div class="button bg-blue" id="CompTweetBtn2"><i class="fa fa-edit"></i> Compose</div>
+								<div class="block main-block" id="CompTweetBox2" style="display:none;">
+									<div class="form-group">
+										<div class="input-group">
+											<textarea id="tweetMsg2" class="" placeholder="Tweet"></textarea>
+											<span class="input-group-btn">
+												<button type="button" class="btn btn-blue" id="writeTweetBtnw2">Tweet</button>				
+												<button type="button" class="btn btn-orange" id="cancelTweetBtnw2">Cancel</button>				
+											</span>
+										</div>
+									</div>
+									<p class="text-orange" id="composeError2" style="display:none;"></p>
+								</div>
+							</ul> -->
 							<ul class="feed-list" id="feed">
+							</ul>
+						</div>
+					  	<div class="tab-pane" id="userFeedTab">
+					  		
+							<ul class="feed-list" id="UsersFeed">
 
 							</ul>
 						</div>
-						<div class="tab-pane" id="myTab">
-							<ul class="feed-list" id="accountFeed">
-
-							</ul>
-					  	</div>
-						<div class="tab-pane" id="composeTab">
-							<div class="block main-block">
-								<div class="form-group">
-									<textarea id="tweetMsg" class="" placeholder="Tweet"></textarea>
-								</div>
-								<p class="text-orange" id="composeError" style="display:none;"></p>
-							</div>
-							<div class="button bg-blue" id="writeTweetBtn">Tweet</div>
-							
-						</div>  
-					  	
-					  	
-					  	
 					</div>
 					
 				</div>
@@ -156,19 +176,19 @@
 			$(document).ready(function(){
 				//window.visitor = prompt("Please enter your username");
 
-				var $body = $('body');
+				/*var $body = $('body');
 				var $feed = $("#feed");
 				var $genBtn = $("#genTweet")
 				var $homeFeed = $(".homeFeed");
 				var $home = $(".home")
+				*/
 				
 				
-				
-				var each = function(array, cb){
+				/*var each = function(array, cb){
 					for (var i = 0; i < array.length; i++) {
 						cb(array[i], i, array);
 					};
-				}
+				}*/
 
 				/*var Tweet = {
 					getAll: function(username){
@@ -222,7 +242,7 @@
 					}*/
 				//};
 				
-				var getNewTweets = function(){
+				/*var getNewTweets = function(){
 					generateRandomTweet();
 					//Tweet.getAll();
 				}
@@ -249,7 +269,7 @@
 					});
 					
 				}
-			
+			*/
 
 			});
 
