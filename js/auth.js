@@ -1,255 +1,242 @@
-$(document).ready(function(){
-
-	window.User = {};
-	User.list = [];
+$(document).ready(function(){	
 	window.each = function(array, cb){
 		for (var i = 0; i < array.length; i++) {
 			cb(array[i], i, array);
 		};
 	}
-
-	var myRootRef;
+/*
+	VARS ======================= VARS
+*/	
 	var auth;
-	var account = {
-			id: "",
-			uid: "",
-			email: "",
-			username: "",
-			post: function(data){
-					doPost(data);
-			}
-	};
-	var btns = {
-		logout: $("#logOutBtn"),
-		showLogin: $("#showLoginBtn"),
-		showSignup: $("#showSignupBtn"),
-		showForgot: $("#showForgotBtn"),
-		userLink: $(".link"),
-		compTweet: $("#CompTweetBtn"),
-		cancelTweet: $("#cancelTweetBtn")
+	window.User = {};
+	window.Account = {id: "", uid: "", email: "", username: ""};
+	window.Genorator = {};
+/*
+	VARS ======================= VARS
+*/
+	// page --- VARS	
+	//$myRootRef;
+	$usersRef = new Firebase('https://twittler-app.firebaseio.com/users/');
+	User.list = [];
+	$sideUsers = $("#userBlock"),
+	$Feed = $("#feed"),
+	$myTweetsBtn = $("#mtweets");
+	$allTweetsBtn = $("#homeFeed");
+
+
+	// login / signup --- VARS
+	$logoutBtn = $("#logOutBtn");
+	$showLoginBtn = $(".showLoginBtn");
+	$showSignupBtn = $("#showSignupBtn");
+	$showForgotBtn = $("#showForgotBtn");
+	$loginBox = $("#loginbox");
+	$signupBox = $("#signupbox");
+	$forgotBox = $("#forgotbox");
+	$userData = $("#userdata");
+	$twittler = $("#twittler");
+	$loginError = $("#loginError");
+	$signupError = $("#signupError");
+	$forgotError = $("#forgotError");
+	$forgotSuccess = $("#forgotSuccess");
+
+	// composeTweet --- VARS
+	$compBox = $("#CompTweetBox")
+	$compTweetBtn = $("#CompTweetBtn");
+	$tweetBtn = $("#writeTweetBtn");
+	$tweetMsg = $("#tweetMsg");
+	$compError = $("#composeError");
+	$cancelTweet = $("#cancelTweetBtn");
+	
+/*
+	OPTIONS ======================= OPTIONS
+*/	
+
+	// page --- OPTIONS
+	Tweet.allTweets = function(){
+		$Feed.find(".tweet").show();
 	}
-	var submits = {
-		tweet: $("#writeTweetBtn"),
+	Tweet.myTweets = function(){
+		$Feed.find(".tweet").show();
+		$Feed.find(".tweet").not("."+Account.username).hide();
 	}
-	var blocks = {
-		sideUsers : $("#userBlock"),
-		tweetFeed: $("#feed"),
-		compBox: $("#CompTweetBox")
+
+	// login / signup --- OPTIONS
+	Account.showSignup = function(){
+		$loginBox.hide(); 
+		$signupBox.show().find("input").first().focus();
 	}
-	var tabs = {
-		feed: $("#homeFeed")
+	Account.showLogin = function(){
+			$loginBox.show().find("input").first().focus();
+			$signupBox.hide();
+			$forgotBox.hide();
+			$twittler.hide();
 	}
-	var twittlers = [];
-	var $tweetBtn = $("#writeTweetBtn");
-	var $tweetMsg = $("#tweetMsg");
-	var $accountFeed = $("#accountFeed");
-	var errors = {
-		compose: {
-			select: $("#composeError"),
-			msg: "Please add a tweet before submitting!",
-			show: function(){
-				errors.compose.select.text(errors.compose.msg);
-				errors.compose.select.show();
-			},
-			hide: function(){
-				errors.compose.select.hide();
-			}
+	Account.showForgotPassword = function (){
+			$loginBox.hide();
+			$forgotBox.show().find("input").first().focus();
+	}
+	Account.showUser = function(Account){
+			$loginBox.hide();
+			$signupBox.hide();
+			$("#accountEmail").text(Account.email);
+			$("#accountUsername").text(Account.username);
+			$twittler.show();
+	}
+	Account.ShowloginError = function(error, box, show){
+			
+		if(show){
+			var msg = error.message.split(": ")[2];
+			console.log(msg);
+			box.show().find("p").text(msg);
+		} else {
+			box.hide().find("p").text("");
 		}
 	}
-
-	var init = function(){
-		myRootRef = new Firebase('https://twittler-app.firebaseio.com/users/');
-
-		auth = new FirebaseSimpleLogin(myRootRef, function(error, user) {
-				if (error) {
-						// an error occurred while attempting login
-						alert("Error logging in: "+ error);
-				} else if (user) {						
-						account.id = user.id
-						account.uid = user.uid
-						account.email = user.email
-						User.getData(user);
-				} else {
-						//not logged in
-						showLogin();
-				}
-		});
-		$("#loginbtn").click(function(){
-				doLogin($("#loginemail").val(),$("#loginpass").val());
-		})
-		$("#signupbtn").click(function(){
-				createNewUser($("#newemail").val(),$("#newpass").val(), $("#newUsername").val());
-		})
-		$("#forgotbtn").click(function(){
-				doForgotPassword($("#forgotemail").val());
-		})
+	// composeTweet --- OPTIONS
+	var showCompError = function(show){
+		if(show){ $compError.slideDown()} else {$compError.slideUp()}
 	}
-
-	User.init = function (){
-			//console.log(users)
-		myRootRef.on("value", function(snapshot){
-			blocks.sideUsers.children().remove();
-			_.each(snapshot.val(), function (item, index, array){
-				//console.log(index);
-				User.list.push({name: item.username, id: index});
-				User.display(index, item);
-			})
-			setButtons();
-		});
+	var showCompBox = function(show){
+		if(show){ $compTweetBtn.hide(); $compBox.show().find("textarea").focus();
+		} else { $compTweetBtn.show(); $compBox.hide(); showCompError(false); $tweetMsg.val("")  };
 	}
+/*
+ 	EVENTS ======================= EVENTS
+*/
 
-	var setButtons = function(){
-		$(".link").click(function(){
-			//blocks.tweetFeed.children().remove();
-			twittlers = [];
-			var id = $(this).attr('id').split("_")[1];
-			Tweet.getByUser(id);
-			//getUserTweets(id);
+	// page --- EVENTS
+	$myTweetsBtn.on("click", function(e){e.stopPropagation();e.preventDefault();Tweet.myTweets()});
+	$allTweetsBtn.on("click", function(e){e.stopPropagation();e.preventDefault(); Tweet.allTweets()});
 
-		});
+	// login / signup --- EVENTS
+	$logoutBtn.on("click", function(){ Account.doLogout() });
+	$showLoginBtn.on("click", function(){ Account.showLogin() });
+	$showForgotBtn.on("click", function(){ Account.showForgotPassword() });
+	$showSignupBtn.on("click", function(){ Account.showSignup() });
 
-		$("#mtweets").click(function(){
-			Tweet.getByUser(account.uid);
-		});
-
-	}
-	var storeUser = function(user, username){
-			var newEmail = user.email;
-			var newUsername = username;
-			myRootRef.child(user.uid).set({username: newUsername, email:newEmail})
-	}
-
-	var createNewUser = function(email,pass,username){
-		//console.log(email+ " " +pass);
-		auth.createUser(email, pass, function(error, user) {
-			if (!error) {
-				//console.log(user);
-				storeUser(user, username);
-				doLogin(email,pass);
-			} else {
-				alert("Could not create user: "+error);
-			}
-		});
-	}
-
-	var showSignup = function(){
-			$("#loginbox").hide();
-			$("#signupbox").show();
-	}
-
-	var showLogin = function(){
-			$("#loginbox").show();
-			$("#forgotbox").hide();
-			$("#signupbox").hide();
-			$("#userdata").hide();
-			$("#accountEmail").text("");
-			$("#accountUsername").text("");
-			$("#twittler").hide();
-	}
-
-	var showForgotPassword = function (){
-			$("#loginbox").hide();
-			$("#forgotbox").show();
-	}
-	var showUser = function(account){
-			$("#loginbox").hide();
-			$("#signupbox").hide();
-			$("#userdata").show();
-			$("#accountEmail").text(account.email);
-			$("#accountUsername").text(account.username);
-			$("#twittler").show();
-	}
-
-	User.getData = function(user){
-		$("#loginbox").hide();
-		$("#signupbox").hide();
-
-		myRootRef.child(user.uid).once('value', function(snapshot) {
-			var U = snapshot.val();
-			//console.log(snapshot.val());
-			account.username = U.username;
-			account.tweets = U.tweets;
-			if(U.username == null){
-					alert("Please add your username under settings");
-			}
-
-			showUser(account);
-		});
-	}
-
-
-
-
-	var doLogin = function(email,pass){
-		auth.login('password', {
-			email: email,
-			password: pass
-		});
-	}
-
-	var doForgotPassword = function(email){
-		auth.sendPasswordResetEmail(email, function(error,success){
-			if(!error){
-					alert("Password reset email sent, check your inbox!");
-					showLogin();
-			} else {
-					alert("Error sending reset: "+error);
-			}
-		});
-	}
-	var doPost = function(data){
-		var data = {
-			message: data.message,
-			user: data.user,
-			userId: data.uid,
-			//tags: data.tags,
-			created_at: Firebase.ServerValue.TIMESTAMP
-		};
-		//myRootRef.child(account.uid).child('tweets').push(data);
-		tweetsRef.push(data);
-		$tweetMsg.val("");
-		data = null;
-	}
-	var doLogout = function(){
-		auth.logout();
-	}
-	User.display = function (id, user){
-		var temp = '<a data-userid="'+id+'" data-toggle="tab" href="#userFeedTab" class="link block-item" id="link_'+id+'">@'+user.username+'</div>';
-		$(temp).appendTo(blocks.sideUsers);
-	}
-
-	var saveDataForUser = function(key,value){
-		myRootRef.child(userid).update({key:value});
-	}
-	
-	btns.logout.click(function(){ doLogout() });
-	btns.showLogin.click(function(){ showLogin() });
-	btns.showSignup.click(function(){ showSignup() });
-	btns.showForgot.click(function(){ showForgotPassword() });
-
+	// composeTweet --- EVENTS
+	$compTweetBtn.on("click", function(){showCompBox(true)});
+	$cancelTweet.on("click", function(){ showCompBox(false)});
 	$tweetBtn.click(function(){
 		var data = {};
-		data.user = account.username;
-		data.uid = account.uid;
+		data.user = Account.username;
+		data.uid = Account.uid;
 		data.message = $tweetMsg.val();
 		data.created_at = Firebase.ServerValue.TIMESTAMP;
-		if(!data.message){
-			errors.compose.show();
-		} else {
-			errors.compose.hide();
-			Tweet.post(data);
-			 blocks.compBox.hide();
-			btns.compTweet.show();
-			$tweetMsg.val("");
-		}
+		if(!data.message){showCompError(true);} else {Tweet.post(data);showCompBox(false);}
 	});
+	Account.init = function(){
+		auth = new FirebaseSimpleLogin($usersRef, function(error, user) {
+				if (error) {
+						Account.ShowloginError(error,$loginError, true);
+				} else if (user) {						
+						Account.id = user.id
+						Account.uid = user.uid
+						Account.email = user.email
+						Account.getData(user);
+				} else {
+						//not logged in
+						Account.showLogin();
+				}
+		});
+		$("#loginbtn").click(function(){Account.doLogin($("#loginemail").val(),$("#loginpass").val())})
+		$("#signupbtn").click(function(){Account.createNewUser($("#newemail").val(),$("#newpass").val(), $("#newUsername").val())})
+		$("#forgotbtn").click(function(){Account.doForgotPassword($("#forgotemail").val())})
+	}
+	Account.storeUser = function(user, username){
+			var newEmail = user.email;
+			var newUsername = username;
+			$usersRef.child(user.uid).set({username: newUsername, email:newEmail})
+	}
+	Account.createNewUser = function(email,pass,username){
+		if(!username){
+				Account.ShowloginError({message: ": : Please input a Username"}, $signupError, true);
+		} else {
+			auth.createUser(email, pass, function(error, user) {
+				
+				 if (!error) {
+					Account.storeUser(user, username);
+					doLogin(email,pass);
+				} else  {
+					Account.ShowloginError(error,$signupError, true);
+					//alert("Could not create user: "+error);
+				}
+			});
+		}
+	}
+	Account.getData = function(user){
+		$usersRef.child(user.uid).once('value', function(snapshot) {
+			var U = snapshot.val();
+			Account.username = U.username;
+			Account.tweets = U.tweets;
+			if(U.username == null){
+					//Account.ShowloginError("Please input a Username", $signupError, true);
+			}
+			Account.showUser(Account);
+		});
+	}
+	Account.doLogin = function(email,pass){
+		auth.login('password', {email: email,password: pass});
+	}
+	Account.doForgotPassword = function(email){
+		auth.sendPasswordResetEmail(email, function(error,success){
+			if(!error){
+					//alert("Password reset email sent, check your inbox!");
+					Account.showLogin();
+					Account.ShowloginError({message: ": : An email was sent containing your new password!!"}, $forgotSuccess, true);
+			} else {
+				Account.ShowloginError(error, $forgotError, true);
+					//alert("Error sending reset: "+error);
+			}
 
+		});
+	}
+	Account.doLogout = function(){
+		auth.logout();
+	}
+	User.init = function (){
+		$usersRef.on("value", function(snapshot){
+			$sideUsers.children().remove();
+			_.each(snapshot.val(), function (item, index, array){
+				User.list.push({name: item.username, id: index});
+				User.display(index, item);
+			});
+		});
+	}
+	User.display = function (id, user){
+		//data-toggle="tab" href="#userFeedTab"
+		var temp = '<a data-userid="'+id+'"  class="'+user.username+' link block-item" id="link_'+id+'">@'+user.username+'</div>';
+		$(temp).appendTo($sideUsers);
+
+		$("."+user.username).on("click", function(){
+			//console.log("hello")
+			$("#feed").find(".tweet").show();
+			$("#feed").find(".tweet").not("."+user.username).hide();
+		});
+	}
+	
+	
+
+
+
+
+		
+	
+	// Get Current Signed in User
+	Account.init();
+	// Get all users.
+	User.init();
+
+
+	
+
+/*
+	Genorator ======================= Genorator
+*/	
 
 	var randomElement = function(collection){
   		var randomIndex = Math.floor(Math.random() * collection.length);
-
   		return collection[randomIndex];
-  		
 	};
 
 	// random tweet generator
@@ -263,30 +250,9 @@ $(document).ready(function(){
 	  	return [randomElement(opening), randomElement(verbs), randomElement(objects), randomElement(nouns), randomElement(tags)].join(' ');
 	};	
 
-	
-	tabs.feed.click(function(){
-		Tweet.getAll();
-	});
-	btns.compTweet.click(function(){
-		$(this).hide();
-		blocks.compBox.show();
-		$tweetMsg.focus();
-	});
-	btns.cancelTweet.click(function(){
-		blocks.compBox.hide();
-		btns.compTweet.show();
-		$tweetMsg.val("");
-	});
-
-	// Get Current Signed in User
-	init();
-	
-	// Get all users.
-	User.init();
 
 	// I MUST CALL USER.init() before i can auto generate
-
- 	var generateRandomTweet = function(){
+ 	Genorator.generateRandomTweet = function(){
 	  	var tweet = {};
 	  	tweet.user = _.sample(User.list);//randomUser(User.list);
 	  	var d = new Date();
@@ -301,11 +267,11 @@ $(document).ready(function(){
 	  	}
 	  	//console.log(tweet.user);
 	};
-	var scheduleNextTweet = function(){
-	  generateRandomTweet();
-	  setTimeout(scheduleNextTweet, Math.random() *  100000);
+	Genorator.scheduleNextTweet = function(){
+	  Genorator.generateRandomTweet();
+	  setTimeout(Genorator.scheduleNextTweet, Math.random() *  1000000);
 	};
-	scheduleNextTweet();
+	Genorator.scheduleNextTweet();
 	
 
 });

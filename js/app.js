@@ -73,7 +73,7 @@ $(document).ready(function(){
 		//console.log(item);
 		var dat = new Date(item.created_at);
 		var newDate = dat.toLocaleDateString();
-		var temp = $('<li data-tweetId="link_'+id+'" id="tweetSelect_'+id+'" data-toggle="tab" class="tweetListBtn feed-list-item" style="cursor: pointer;"></li>');
+		var temp = $('<li data-tweetId="link_'+id+'" id="tweetSelect_'+id+'" data-toggle="tab" class="'+item.user+' tweet tweetListBtn feed-list-item" style="cursor: pointer;"></li>');
 		temp.html('<h4 class="feed-list-item-heading">@' + item.user + '<small class="pull-right">'+newDate+'</small></h4><p class="feed-list-item-text">' + item.message + '</p>');
 		$(temp).prependTo(box);
 		

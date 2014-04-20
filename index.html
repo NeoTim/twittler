@@ -25,58 +25,83 @@
 			
 		    	<div class="clear"></div>
 		    	<div id="loginbox" class="col-md-6 col-md-offset-3" style="display:none;">
-		    		<h2 class="text-center">Login</h2>
-				
-				<div class="form-group">
-					<label>Email</label>
-					<input id="loginemail" type="text" class="form-control" />
+		    		<div class="block block-title">
+			    		<h2 class="text-center">Login</h2>
+			    	</div>
+					
+		    		<div class="block block-main">
+					<div class="form-group">
+						<label>Email</label>
+						<input id="loginemail" type="text" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label>Password</label>
+						<input id="loginpass" type="password" class="form-control" />
+					</div>
+					<div class="form-group">
+						<button class="btn btn-blue" id="loginbtn">Login</button>
+						<div class="btn-group pull-right">
+							<a class="btn btn-warning" type="button" id="showSignupBtn">Sign Up</a>
+							<a class="btn btn-default" type="button"  id="showForgotBtn">Forgot Password?</a>
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-					<label>Password</label>
-					<input id="loginpass" type="password" class="form-control" />
+				<div id="loginError" class="block block-alert block-danger" style="display:none;">
+					<p></p>
 				</div>
-				
-				<button class="btn btn-primary btn-block" id="loginbtn">Login</button>
-				<br>
-				<div class="btn-group btn-group-justified">
-					<a class="btn btn-success" type="button" id="showSignupBtn">Sign Up</a>
-					<a class="btn btn-info" type="button"  id="showFortgotBtn">Forgot Password</a>
+				<div id="forgotSuccess" class="block block-alert block-blue" style="display:none;">
+					<p></p>
 				</div>
+
 		    	</div>
 		    	<div id="signupbox" class="col-md-6 col-md-offset-3" style="display:none;">
-				<h2 class="text-center">Sign Up</h2>
-				
-				<div class="form-group">
-					<label>Username</label>
-					<input id="newUsername" type="text" class="form-control" />
+		    		<div class="block block-title">
+					<h2 class="text-center">Sign Up</h2>
 				</div>
-				<div class="form-group">
-					<label>Email</label>
-					<input id="newemail" type="text" class="form-control" />
+				<div class="block block-main">
+					<div class="form-group">
+						<label>Username</label>
+						<input id="newUsername" type="text" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label>Email</label>
+						<input id="newemail" type="text" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label>Password</label>
+						<input id="newpass" type="password" class="form-control" />
+					</div>
+					
+					
+					<div class="btn-group btn-group-justified">
+						<a class="btn btn-success" type="button" id="signupbtn">Sign Up</a>
+						<a class="btn btn-warning showLoginBtn" type="button"  id="showForgotBtn">Back</a>
+					</div>
 				</div>
-				<div class="form-group">
-					<label>Password</label>
-					<input id="newpass" type="password" class="form-control" />
+				<div id="signupError" class="block block-alert block-danger" style="display:none;">
+					<p></p>
 				</div>
 				
-				
-				
-				<button class="btn btn-primary btn-block" id="signupbtn">Sign Up</button>
-				<br>
-				<a class="btn btn-primary btn-block" id="showLoginBtn">I already have an account</a>
 		    	</div>
-		    	<div id="forgotbox" class="middlebox center" style="display:none;">
-				Forgot Password?
-				<br>
-				<br>
-				Enter your email and we'll send you a reset.
-				<br>
-				Email<input id="forgotemail" type="text"/>
-				<br>
-				<br>
-				<button id="forgotbtn">Reset Password</button>
-				<br>
-				<a href="javascript:showLogin()">Just kidding, I remember it</a>
+		    	<div id="forgotbox" class="col-md-6 col-md-offset-3" style="display:none;">
+		    		<div class="block block-title">
+		    			<h2 class="text-center">Forgot Password?</h2>
+		    		</div>
+				<div class="block block-main">
+					<div class="form-group">
+						<label>Email</label>
+						<input id="forgotemail" type="text" class="form-control" />
+					</div>
+					<div class="btn-group btn-group-justified">
+						<a class="btn btn-success" type="button" id="forgotbtn">Reset Password</a>
+						<a class="btn btn-warning showLoginBtn" type="button"  id="showForgotBtn">Back</a>
+					</div>
+				</div>
+				<!-- <button id="forgotbtn">Reset Password</button> -->
+				<div id="forgotError" class="block block-alert block-danger" style="display:none;">
+					<p></p>
+				</div>
+				<!-- <a href="javascript:showLogin()">Just kidding, I remember it</a> -->
 		    </div>
 		</div>
 		<div class="container" id="twittler" style="display:none;">
@@ -94,8 +119,8 @@
 			<div class="row">
 				<div class="col-md-3">
 					<ul class="side-bar">
-						<li><a data-toggle="tab" href="#feedTab" class="active home" id="homeFeed">Feed</a></li>
-						<li><a id="mtweets" href="#userFeedTab" data-toggle="tab">My Tweets</a></li>
+						<li><a href class="active home" id="homeFeed">Feed</a></li>
+						<li><a id="mtweets" class="link" href>My Tweets</a></li>
 						<span id="userBlock" class="block side-block">
 							<h3 class="block-heading"><i class="fa fa-users"></i> Users</h3>
 						</span>
@@ -109,9 +134,9 @@
 				</div>
 
 				<div class="col-md-9">
-					<ul class="feed-list" id="accountFeed">
+					<div class="feed-list" id="accountFeed">
 			  			<div class="button bg-blue" id="CompTweetBtn"><i class="fa fa-edit"></i> Compose</div>
-						<div class="block main-block" id="CompTweetBox" style="display:none;">
+						<div class="block block-main" id="CompTweetBox" style="display:none;">
 							<div class="form-group">
 								<div class="input-group">
 									<textarea id="tweetMsg" class="" placeholder="Tweet"></textarea>
@@ -121,24 +146,11 @@
 									</span>
 								</div>
 							</div>
-							<p class="text-orange" id="composeError" style="display:none;"></p>
-						</div>
-					</ul>
-					<div class="tab-content">
-
-					  	<div class="tab-pane active" id="feedTab">
-							
-							<ul class="feed-list" id="feed">
-							</ul>
-						</div>
-					  	<div class="tab-pane" id="userFeedTab">
-					  		
-							<ul class="feed-list" id="UsersFeed">
-
-							</ul>
+							<p class="text-orange" id="composeError" style="display:none;">Please add a tweet before submitting!</p>
 						</div>
 					</div>
-					
+					<div class="feed-list" id="feed">
+					</div>
 				</div>
 			</div>
 		</div>
